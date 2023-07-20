@@ -28,7 +28,7 @@ public class App {
         int upperLimit = quotes.length;
         int randomInt = rand.nextInt(upperLimit);
 
-        System.out.println("quote of the day is : " + quotes[randomInt].getText() + "By: "+ quotes[randomInt].getAuthor());
+        System.out.println("quote of the day is : " + quotes[0].getText() + "By: "+ quotes[0].getAuthor());
 
 
 
