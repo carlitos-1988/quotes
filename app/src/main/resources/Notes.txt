@@ -1,0 +1,106 @@
+package quotesredo;
+
+public class Lab {
+
+    String height;
+    String hair_color;
+    String birth_year;
+    String name;
+
+    public Lab(String height, String hair_color, String birth_year, String name) {
+        this.height = height;
+        this.hair_color = hair_color;
+        this.birth_year = birth_year;
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Lab{" +
+                "height='" + height + '\'' +
+                ", hair_color='" + hair_color + '\'' +
+                ", birth_year='" + birth_year + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+
+class starwarsPersonResult{
+    Lab properties;
+    String description;
+
+    public starwarsPersonResult(Lab properties, String description) {
+        this.properties = properties;
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "starwarsPersonResult{" +
+                "properties=" + properties +
+                ", description='" + description + '\'' +
+                '}';
+    }
+}
+
+class StarwarsPerson{
+    starwarsPersonResult result;
+
+    public StarwarsPerson(starwarsPersonResult result) {
+        this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return "StarwarsPerson{" +
+                "result=" + result +
+                '}';
+    }
+}
+
+
+
+ //Below is from 20 Jul2023 this exists in App.java
+
+        //step 1 create url and an HTTP url connection
+        URL starUrl = new URL("https://www.swapi.tech/api/people/1");
+        HttpURLConnection starConnections = (HttpURLConnection) starUrl.openConnection();
+
+        //Step 2: set our headers, check response code, use try/catch to handle bad urls + close connection
+
+        try {
+            starConnections.setRequestMethod("GET");
+            int starStatus = starConnections.getResponseCode();
+            System.out.println(starStatus);
+
+            //Step 3: if code is usable get data as a stream
+            if (starStatus == 200){
+                // step 4: get data as a stream
+                InputStreamReader starStreamReader = new InputStreamReader(starConnections.getInputStream());
+
+                //Step 5: use BuffedReader to read the input(can also use starReade.read()
+                try(BufferedReader starBufferedReader = new BufferedReader(starStreamReader)){
+                    String line = starBufferedReader.readLine();
+                    System.out.println(line);
+
+
+                    //Step 6 part 1: create class(es) to convert formatted JSON Java Objects (come back here when you are done )
+                    //Step 6 par 2: use GSON to create your Java objects
+                    Gson gson2 = new Gson();
+                    StarwarsPerson starwarsPerson = gson.fromJson(line, StarwarsPerson.class);
+                    System.out.println(starwarsPerson.toString());
+                }
+            }
+
+        }catch (MalformedURLException mue){
+            System.out.println("bad URL");
+            mue.printStackTrace();
+        } catch (IOException ioe){
+            System.out.println("problem with API");
+            ioe.printStackTrace();
+        } finally {
+            starConnections.disconnect();
+        }
+
+
+    }
