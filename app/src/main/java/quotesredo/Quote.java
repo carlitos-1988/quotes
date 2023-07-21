@@ -1,6 +1,11 @@
 package quotesredo;
 
+import com.google.gson.Gson;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Quote {
 
@@ -9,7 +14,22 @@ public class Quote {
     String likes;
     String text;
 
+    String quoteText;
+    String quoteAuthor;
+
+    String senderName;
+
+    String quoteLink;
+
+
     public Quote() {
+    }
+
+    public Quote(String quoteText, String quoteAuthor, String senderName, String quoteLink) {
+        this.quoteText = quoteText;
+        this.quoteAuthor = quoteAuthor;
+        this.senderName = senderName;
+        this.quoteLink = quoteLink;
     }
 
     public Quote(String author, String likes, String text) {
@@ -57,6 +77,23 @@ public class Quote {
         this.text = text;
     }
 
+    public static void generateLocalQuote() throws FileNotFoundException {
+        Gson gson = new Gson();
+        FileReader myFile = new FileReader("./app/src/main/resources/recentquotes.json");
+
+        //Array Route
+        Quote[] quotes = gson.fromJson(myFile,Quote[].class);
+//        System.out.println(quotes[0].getAuthor() + " : " + quotes[0].getText());
+//        System.out.println(quotes.length);
+
+        Random rand = new Random();
+        int upperLimit = quotes.length;
+        int randomInt = rand.nextInt(upperLimit);
+//        System.out.println("UpperLimit =" + upperLimit + "RandomInt = " + randomInt );
+        String myReturn = "Quote of the day is : " + quotes[randomInt].getText() + " By: "+ quotes[randomInt].getAuthor();
+        System.out.println(myReturn);
+    }
+
     @Override
     public String toString() {
         return "Quote{" +
@@ -64,6 +101,16 @@ public class Quote {
                 ", author='" + author + '\'' +
                 ", likes='" + likes + '\'' +
                 ", text='" + text + '\'' +
+                '}';
+    }
+
+
+    public String toStringAPI() {
+        return "Quote{" +
+                "quoteText='" + quoteText + '\'' +
+                ", quoteAuthor='" + quoteAuthor + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", quoteLink='" + quoteLink + '\'' +
                 '}';
     }
 }

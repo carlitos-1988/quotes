@@ -5,49 +5,18 @@ package quotesredo;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
 
 public class App {
     public static void main(String[] args) throws IOException {
         Gson gson = new Gson();
-        FileReader myFile = new FileReader("./app/src/main/resources/recentquotes.json");
 
-        //Array Route
-        Quote[] quotes = gson.fromJson(myFile,Quote[].class);
-//        System.out.println(quotes[0].getAuthor() + " : " + quotes[0].getText());
-//        System.out.println(quotes.length);
-
-        Random rand = new Random();
-        int upperLimit = quotes.length;
-        int randomInt = rand.nextInt(upperLimit);
-
-        System.out.println("quote of the day is : " + quotes[0].getText() + "By: "+ quotes[0].getAuthor());
-
-
-
-        //Using an ArrayList (Type Token)
-
-//        TypeToken<ArrayList<Quote>> collectionType = new TypeToken<ArrayList<Quote>>(){};
-//        ArrayList<Quote> quoteList = gson.fromJson(myFile, collectionType);
-//
-//        System.out.println(quoteList.get(0).getAuthor() + " : "+ quoteList.get(0).getText());
-
-
-
-
-        //Below is from 20 Jul2023 lab example
-
-
-
+        Quote.generateLocalQuote();
         //step 1 create url and an HTTP url connection
-        URL starUrl = new URL("https://www.swapi.tech/api/people/1");
+        URL starUrl = new URL(" http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
         HttpURLConnection starConnections = (HttpURLConnection) starUrl.openConnection();
 
         //Step 2: set our headers, check response code, use try/catch to handle bad urls + close connection
@@ -65,14 +34,26 @@ public class App {
                 //Step 5: use BuffedReader to read the input(can also use starReade.read()
                 try(BufferedReader starBufferedReader = new BufferedReader(starStreamReader)){
                     String line = starBufferedReader.readLine();
-                    System.out.println(line);
+                    //System.out.println(line);
 
 
                     //Step 6 part 1: create class(es) to convert formatted JSON Java Objects (come back here when you are done )
                     //Step 6 par 2: use GSON to create your Java objects
                     Gson gson2 = new Gson();
-                    StarwarsPerson starwarsPerson = gson.fromJson(line, StarwarsPerson.class);
-                    System.out.println(starwarsPerson.toString());
+                    Quote apiQuote = gson.fromJson(line, Quote.class);
+
+
+                    //Write JSON to file
+
+                    File quoteFileOut = new File("./app/src/main/resources/recentquotes.json");
+                    try (FileWriter quoteFileWriter = new FileWriter(quoteFileOut,true)){
+                        gson2.toJson(apiQuote, quoteFileWriter);
+                        System.out.println("TEST");
+                    } catch(IOException ioe){
+                        System.out.println("Caught an IOException with stack trace: ");
+                        ioe.printStackTrace();
+                    }
+
                 }
             }
 
@@ -85,6 +66,9 @@ public class App {
         } finally {
             starConnections.disconnect();
         }
+
+
+
 
 
     }
